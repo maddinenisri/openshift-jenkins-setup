@@ -27,8 +27,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: jenkins-agent
-        :latest
+        name: jenkins-agent:latest
 - kind: ImageStream
   apiVersion: v1
   metadata:
@@ -52,8 +51,7 @@ objects:
         - jenkins-agent
         from:
           kind: ImageStreamTag
-          name: jenkins-agent
-          :latest
+          name: jenkins-agent:latest
     - type: ConfigChange
     replicas: 1
     selector:
@@ -101,7 +99,7 @@ parameters:
   - name: JENKINS_AGENT_NAME
     description: Agent name
     value: "agent1"
-    - name: JENKINS_NAME
+  - name: JENKINS_NAME
     description: Options for the Node
     value: "agent1"
   - name: JENKINS_URL
