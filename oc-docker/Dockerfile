@@ -21,4 +21,4 @@ RUN apk add --no-cache curl ca-certificates && \
     rm -rf /root/.cache /var/cache/apk/ && \
     oc version
 
-CMD ["oc"]
+#CMD ["oc"]
