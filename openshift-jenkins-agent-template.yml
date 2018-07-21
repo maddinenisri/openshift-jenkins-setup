@@ -96,20 +96,20 @@ objects:
       targetPort: 50000
       protocol: TCP
 parameters:
-  - name: JENKINS_USERNAME
-    description: Options for the Java command
-    value: "admin"
-  - name: JENKINS_PASSWORD
+  - name: JENKINS_SECRET
+    description: Jnlp Secret
+  - name: JENKINS_AGENT_NAME
+    description: Agent name
+    value: "agent1"
+    - name: JENKINS_NAME
     description: Options for the Node
-  - name: JENKINS_SERVICE_HOST
+    value: "agent1"
+  - name: JENKINS_URL
     description: Jenkins Service
-    value: "blueocean-jenkins"
-  - name: JENKINS_SERVICE_PORT
+    value: "http://blueocean-jenkins:8080"
+  - name: JENKINS_AGENT_WORKDIR
     description: Jenkins port
-    value: "8080"
-  - name: JENKINS_SLAVE_SERVICE_PORT
-    description: jnlp port
-    value: "50000"
-  - name: JENKINS_SLAVE_SERVICE_HOST
+    value: "/home/jenkins"
+  - name: JENKINS_TUNNEL
     description: jnlp servie name
-    value: "blueocean-jenkins-jnlp"    
+    value: "blueocean-jenkins-jnlp:50000"    
