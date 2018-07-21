@@ -1,5 +1,5 @@
 podTemplate(label: 'maven-selenium-docker', containers: [
-  containerTemplate(name: 'docker', image: 'docker:1.11', ttyEnabled: true, command: 'cat'),
+  containerTemplate(name: 'docker', image: 'widerin/openshift-cli', ttyEnabled: true, command: 'cat'),
   containerTemplate(name: 'maven-firefox', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
   containerTemplate(name: 'maven-chrome', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
   containerTemplate(name: 'selenium-hub', image: 'selenium/hub:3.4.0'),
@@ -48,6 +48,7 @@ podTemplate(label: 'maven-selenium-docker', containers: [
       git 'https://github.com/jenkinsci/docker-jnlp-slave.git'
       container('docker') {
         sh "docker build -t ${image} ."
+        sh "oc version"
       }
     }
   }
