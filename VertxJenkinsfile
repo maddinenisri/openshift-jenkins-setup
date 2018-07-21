@@ -1,0 +1,50 @@
+podTemplate(label: 'maven-vertx-docker', containers: [
+  containerTemplate(name: 'docker', image: 'docker-registry.default.svc:5000/devops/oc-docker:latest', ttyEnabled: true, command: 'cat'),
+  containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat')],
+  volumes: [hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')]) {
+
+  node('maven-vertx-docker') {
+    stage('Checkout') {
+      git 'https://github.com/maddinenisri/vertx_ms.git'
+    }
+
+    stage('Build') {
+        container('maven') {
+            dir("httpibconnector") {
+                sh 'mvn clean install'
+            }
+        }
+    }
+
+    def sourceImageTag = "http-ib-connector:1.0.${env.BUILD_NUMBER}"
+    def targetImageTag = "docker-registry.default.svc:5000/devops/http-ib-connector:1.0.${env.BUILD_NUMBER}"
+
+    stage('Build Docker image') {
+      container('docker') {
+          dir("httpibconnector/target") {
+            sh "cp src/main/docker/Dockerfile ."
+            sh "docker build -t sourceImageTag ."
+            sh "docker tag ${sourceImageTag} ${targetImageTag}"
+          }
+      }
+    }
+
+    stage('Upload') {
+        container('docker') {
+            try {
+                withCredentials([string(credentialsId: 'oc_admin_login_time_based_token', variable: 'token')]) {
+                    sh "docker login -p $token -e unused -u unused docker-registry.default.svc:5000 && docker push ${targetImageTag}"
+                }
+            }
+            catch(failed) {
+                timeout(time: 30, unit: 'MINUTES') { // Upload failed make sure manual upload from slave
+                    userInput = input(
+                        id: 'Proceed1', message: 'Is Dokcer image upload successful?', parameters: [
+                        [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you agree with this']
+                    ])
+                }
+            }
+        }
+    }
+  }
+}
