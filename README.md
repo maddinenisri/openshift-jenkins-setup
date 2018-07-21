@@ -6,6 +6,8 @@ oc project devops
 oc create -f openshift-jenkins-template.yml
 ```
 
+Hostaccess for docker mount 
 ```sh
 oc adm policy add-scc-to-user anyuid -z default
+oc adm policy add-scc-to-user hostaccess admin
 ```

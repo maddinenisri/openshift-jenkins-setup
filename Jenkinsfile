@@ -1,4 +1,5 @@
 podTemplate(label: 'maven-selenium-docker', containers: [
+  containerTemplate(name: 'docker', image: 'docker:1.11', ttyEnabled: true, command: 'cat'),
   containerTemplate(name: 'maven-firefox', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
   containerTemplate(name: 'maven-chrome', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
   containerTemplate(name: 'selenium-hub', image: 'selenium/hub:3.4.0'),
@@ -13,9 +14,7 @@ podTemplate(label: 'maven-selenium-docker', containers: [
     containerEnvVar(key: 'HUB_PORT_4444_TCP_PORT', value: '4444'),
     containerEnvVar(key: 'DISPLAY', value: ':98.0'),
     containerEnvVar(key: 'SE_OPTS', value: '-port 5557'),
-  ]),
-  containerTemplate(name: 'docker', image: 'docker:1.11', ttyEnabled: true, command: 'cat')
-  ],
+  ])],
   volumes: [hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')]) {
 
   node('maven-selenium-docker') {
