@@ -1,4 +1,4 @@
-FROM danielguerra/alpine-docker:latest
+FROM docker:1.11
 
 ENV OS_CLI_VERSION v3.9.0
 ENV OS_TAG 191fece
