@@ -44,6 +44,7 @@ podTemplate(label: 'maven-selenium-docker', containers: [
     }
 
     stage('Build Docker image') {
+      def image = "jenkins/jnlp-slave"
       git 'https://github.com/jenkinsci/docker-jnlp-slave.git'
       container('docker') {
         sh "docker build -t ${image} ."
