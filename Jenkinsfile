@@ -43,16 +43,25 @@ podTemplate(label: 'maven-selenium-docker', containers: [
       containerLog('selenium-firefox')
     }
 
+
+    def image = "jenkins/jnlp-slave:1.0.${env.BUILD_NUMBER}"
     stage('Build Docker image') {
-      def image = "jenkins/jnlp-slave"
       git 'https://github.com/jenkinsci/docker-jnlp-slave.git'
       container('docker') {
         sh "docker build -t ${image} ."
+        sh "docker tag ${image} docker-registry.default.svc:5000/devops/${image}"
+
       }
     }
 
     stage('Approve') {
         container('docker') {
+            withCredentials([string(credentialsId: 'oc_admin_login_time_based_token', variable: 'token')]) {
+                sh """
+                docker login -p $token -e unused -u unused
+                docker push docker-registry.default.svc:5000/devops/${image}  
+                """
+            }
             timeout(time: 30, unit: 'MINUTES') { // change to a convenient timeout for you
                 userInput = input(
                 id: 'Proceed1', message: 'Was this successful?', parameters: [
