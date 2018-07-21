@@ -7,7 +7,7 @@ podTemplate(label: label, containers: [
   containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:latest', command: 'cat', ttyEnabled: true)
 ],
 volumes: [
-  hostPathVolume(mountPath: '/home/gradle/.gradle', hostPath: '/var/jenkins_home/.gradle'),
+  hostPathVolume(mountPath: '/home/gradle/.gradle', hostPath: '/var/tmp/.gradle'),
   hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
 ]) {
   node(label) {
