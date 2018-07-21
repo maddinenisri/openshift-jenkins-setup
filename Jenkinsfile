@@ -56,14 +56,18 @@ podTemplate(label: 'maven-selenium-docker', containers: [
 
     stage('Approve') {
         container('docker') {
-            withCredentials([string(credentialsId: 'oc_admin_login_time_based_token', variable: 'token')]) {
-                sh "docker login -p $token -e unused -u unused && docker push docker-registry.default.svc:5000/devops/${image}"
+            try {
+                withCredentials([string(credentialsId: 'oc_admin_login_time_based_token', variable: 'token')]) {
+                    sh "docker login -p $token -e unused -u unused && docker push docker-registry.default.svc:5000/devops/${image}"
+                }
             }
-            timeout(time: 30, unit: 'MINUTES') { // change to a convenient timeout for you
-                userInput = input(
-                id: 'Proceed1', message: 'Was this successful?', parameters: [
-                [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you agree with this']
-                ])
+            catch(failed) {
+                timeout(time: 30, unit: 'MINUTES') { // Upload failed make sure manual upload from slave
+                    userInput = input(
+                        id: 'Proceed1', message: 'Is Dokcer image upload successful?', parameters: [
+                        [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you agree with this']
+                    ])
+                }
             }
         }
     }
