@@ -67,8 +67,18 @@ objects:
           imagePullPolicy: Always
           name: jenkins-agent
           env:
-          - name: JENKINS_SERVICE_HOST
-            value: 
+          - name: JENKINS_SECRET
+            value: ${JENKINS_SECRET}
+          - name: JENKINS_AGENT_NAME
+            value: ${JENKINS_AGENT_NAME}
+          - name: JENKINS_NAME
+            value: ${JENKINS_NAME}
+          - name: JENKINS_URL
+            value: ${JENKINS_URL}
+          - name: JENKINS_AGENT_WORKDIR
+            value: ${JENKINS_AGENT_WORKDIR}
+          - name: JENKINS_TUNNEL
+            value: ${JENKINS_TUNNEL}
           volumeMounts:
           - mountPath: /home/jenkins
             name: jenkins-agent-data
