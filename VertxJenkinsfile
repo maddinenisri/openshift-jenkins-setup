@@ -22,7 +22,7 @@ podTemplate(label: 'maven-vertx-docker', containers: [
     stage('Build Docker image') {
       container('docker') {
           dir("httpibconnector/target") {
-            sh "cp src/main/docker/Dockerfile ."
+            sh "cp ../src/main/docker/Dockerfile ."
             sh "docker build -t sourceImageTag ."
             sh "docker tag ${sourceImageTag} ${targetImageTag}"
           }
