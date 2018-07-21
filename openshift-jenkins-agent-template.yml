@@ -68,6 +68,9 @@ objects:
         - image: jenkins-agent
           imagePullPolicy: Always
           name: jenkins-agent
+          env:
+          - name: JENKINS_SERVICE_HOST
+            value: 
           volumeMounts:
           - mountPath: /var/lib/jenkins
             name: jenkins-agent-data
@@ -79,3 +82,34 @@ objects:
         volumes:
         - emptyDir: {}
           name: jenkins-agent-data
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: jenkins-agent
+  spec:
+    selector:
+      name: jenkins-agent
+    type: ClusterIP
+    ports:
+    - name: jnlp-port
+      port: 50000
+      targetPort: 50000
+      protocol: TCP
+parameters:
+  - name: JENKINS_USERNAME
+    description: Options for the Java command
+    value: "admin"
+  - name: JENKINS_PASSWORD
+    description: Options for the Node
+  - name: JENKINS_SERVICE_HOST
+    description: Jenkins Service
+    value: "blueocean-jenkins"
+  - name: JENKINS_SERVICE_PORT
+    description: Jenkins port
+    value: "8080"
+  - name: JENKINS_SLAVE_SERVICE_PORT
+    description: jnlp port
+    value: "50000"
+  - name: JENKINS_SLAVE_SERVICE_HOST
+    description: jnlp servie name
+    value: "blueocean-jenkins-jnlp"    
