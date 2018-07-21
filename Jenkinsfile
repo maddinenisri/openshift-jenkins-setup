@@ -53,7 +53,7 @@ podTemplate(label: 'maven-selenium-docker', containers: [
 
     stage('Approve') {
         container('docker') {
-            timeout(time: 15, unit: 'SECONDS') { // change to a convenient timeout for you
+            timeout(time: 30, unit: 'MINUTES') { // change to a convenient timeout for you
                 userInput = input(
                 id: 'Proceed1', message: 'Was this successful?', parameters: [
                 [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you agree with this']
