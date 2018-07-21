@@ -7,15 +7,11 @@ LABEL Description="This is a base image, which allows connecting Jenkins agents 
 ARG HOME=/home/jenkins
 ARG VERSION=3.10
 
-USER ROOT
-
 ENV HOME=${HOME}
 
 COPY ./scripts/* /usr/local/bin/
 
-RUN chmod 755 /usr/share/jenkins && \
-    chmod 644 /usr/share/jenkins/slave.jar && \
-    mkdir -p /home/jenkins/.jenkins && \
+RUN mkdir -p /home/jenkins/.jenkins && \
     chmod -R +x /usr/local/bin && \
     chmod -R a+w /home/jenkins
 
