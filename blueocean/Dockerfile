@@ -1,9 +1,10 @@
 FROM jenkinsci/blueocean
 
+#Copy plugins file
+COPY plugins.txt /usr/share/jenkins/plugins.txt
+
 #Install Plugins
-RUN /usr/local/bin/install-plugins.sh kubernetes
-RUN /usr/local/bin/install-plugins.sh github
-RUN /usr/local/bin/install-plugins.sh github-organization-folder
+RUN /usr/local/bin/install-plugins.sh $(cat /usr/share/jenkins/plugins.txt | tr '\n' ' ')
 
 # install Maven
 #USER root
