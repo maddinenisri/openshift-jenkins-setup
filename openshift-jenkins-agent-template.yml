@@ -70,7 +70,7 @@ objects:
           - name: JENKINS_SERVICE_HOST
             value: 
           volumeMounts:
-          - mountPath: /var/lib/jenkins
+          - mountPath: /home/jenkins
             name: jenkins-agent-data
         dnsPolicy: ClusterFirst
         restartPolicy: Always
