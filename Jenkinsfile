@@ -1,65 +1,53 @@
-def label = "jnlp"
+podTemplate(label: 'maven-selenium-docker', containers: [
+  containerTemplate(name: 'maven-firefox', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
+  containerTemplate(name: 'maven-chrome', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
+  containerTemplate(name: 'selenium-hub', image: 'selenium/hub:3.4.0'),
+  containerTemplate(name: 'selenium-chrome', image: 'selenium/node-chrome:3.4.0', envVars: [
+    containerEnvVar(key: 'HUB_PORT_4444_TCP_ADDR', value: 'localhost'),
+    containerEnvVar(key: 'HUB_PORT_4444_TCP_PORT', value: '4444'),
+    containerEnvVar(key: 'DISPLAY', value: ':99.0'),
+    containerEnvVar(key: 'SE_OPTS', value: '-port 5556'),
+  ]),
+  containerTemplate(name: 'selenium-firefox', image: 'selenium/node-firefox:3.4.0', envVars: [
+    containerEnvVar(key: 'HUB_PORT_4444_TCP_ADDR', value: 'localhost'),
+    containerEnvVar(key: 'HUB_PORT_4444_TCP_PORT', value: '4444'),
+    containerEnvVar(key: 'DISPLAY', value: ':98.0'),
+    containerEnvVar(key: 'SE_OPTS', value: '-port 5557'),
+  ]),
+  containerTemplate(name: 'docker', image: 'docker:1.11', ttyEnabled: true, command: 'cat')
+  ],
+  volumes: [hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')]) {
 
-podTemplate(label: label, containers: [
-  containerTemplate(name: 'gradle', image: 'gradle:4.5.1-jdk9', command: 'cat', ttyEnabled: true),
-  containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true),
-  containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.8.8', command: 'cat', ttyEnabled: true),
-  containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:latest', command: 'cat', ttyEnabled: true)
-],
-volumes: [
-  hostPathVolume(mountPath: '/home/gradle/.gradle', hostPath: '/var/tmp/.gradle'),
-  hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
-]) {
-  node(label) {
-    def myRepo = checkout scm
-    def gitCommit = myRepo.GIT_COMMIT
-    def gitBranch = myRepo.GIT_BRANCH
-    def shortGitCommit = "${gitCommit[0..10]}"
-    def previousGitCommit = sh(script: "git rev-parse ${gitCommit}~", returnStdout: true)
- 
-    stage('Test') {
-      try {
-        container('gradle') {
-          sh """
-            pwd
-            echo "GIT_BRANCH=${gitBranch}" >> /etc/environment
-            echo "GIT_COMMIT=${gitCommit}" >> /etc/environment
-            gradle -version
-            """
+  node('maven-selenium') {
+    stage('Checkout') {
+      git 'https://github.com/carlossg/selenium-example.git'
+      parallel (
+        firefox: {
+          container('maven-firefox') {
+            stage('Test firefox') {
+              sh 'mvn -B clean test -Dselenium.browser=firefox -Dsurefire.rerunFailingTestsCount=5 -Dsleep=0'
+            }
+          }
+        },
+        chrome: {
+          container('maven-chrome') {
+            stage('Test chrome') {
+              sh 'mvn -B clean test -Dselenium.browser=chrome -Dsurefire.rerunFailingTestsCount=5 -Dsleep=0'
+            }
+          }
         }
-      }
-      catch (exc) {
-        println "Failed to test - ${currentBuild.fullDisplayName}"
-        throw(exc)
-      }
+      )
     }
-    stage('Build') {
-      container('gradle') {
-        sh "gradle -version"
-      }
+
+    stage('Logs') {
+      containerLog('selenium-chrome')
+      containerLog('selenium-firefox')
     }
-    // stage('Create Docker images') {
-    //   container('docker') {
-    //     withCredentials([[$class: 'UsernamePasswordMultiBinding',
-    //       credentialsId: 'dockerhub',
-    //       usernameVariable: 'DOCKER_HUB_USER',
-    //       passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
-    //       sh """
-    //         docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}
-    //         docker build -t namespace/my-image:${gitCommit} .
-    //         docker push namespace/my-image:${gitCommit}
-    //         """
-    //     }
-    //   }
-    // }
-    stage('Run kubectl') {
-      container('kubectl') {
-        sh "kubectl get pods"
-      }
-    }
-    stage('Run helm') {
-      container('helm') {
-        sh "helm list"
+
+    stage('Build Docker image') {
+      git 'https://github.com/jenkinsci/docker-jnlp-slave.git'
+      container('docker') {
+        sh "docker build -t ${image} ."
       }
     }
   }
