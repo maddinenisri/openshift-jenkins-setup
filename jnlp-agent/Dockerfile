@@ -12,7 +12,7 @@ ENV HOME=${HOME}
 COPY ./scripts/* /usr/local/bin/
 
 RUN mkdir -p /home/jenkins/.jenkins && \
-    chmod -R +x /usr/local/bin && \
+    chmod -R +x /usr/local/bin/jenkins-slave.sh && \
     chmod -R a+w /home/jenkins
 
 ENTRYPOINT ["/usr/local/bin/jenkins-slave.sh"]
