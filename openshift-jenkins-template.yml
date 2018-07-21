@@ -123,3 +123,7 @@ objects:
       name: blueocean-jenkins
       weight: 100
     wildcardPolicy: None
+parameters:
+  - name: name
+    description: name
+    value: blueocean-jenkins
