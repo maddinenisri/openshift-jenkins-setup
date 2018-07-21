@@ -58,7 +58,7 @@ podTemplate(label: 'maven-selenium-docker', containers: [
         container('docker') {
             try {
                 withCredentials([string(credentialsId: 'oc_admin_login_time_based_token', variable: 'token')]) {
-                    sh "docker login -p $token -e unused -u unused && docker push docker-registry.default.svc:5000/devops/${image}"
+                    sh "docker login -p $token -e unused -u unused docker-registry.default.svc:5000 && docker push docker-registry.default.svc:5000/devops/${image}"
                 }
             }
             catch(failed) {
