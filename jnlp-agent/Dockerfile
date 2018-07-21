@@ -7,6 +7,8 @@ LABEL Description="This is a base image, which allows connecting Jenkins agents 
 ARG HOME=/home/jenkins
 ARG VERSION=3.10
 
+USER ROOT
+
 ENV HOME=${HOME}
 
 COPY ./scripts/* /usr/local/bin/
