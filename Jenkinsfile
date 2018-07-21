@@ -18,7 +18,7 @@ podTemplate(label: 'maven-selenium-docker', containers: [
   ],
   volumes: [hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')]) {
 
-  node('maven-selenium') {
+  node('maven-selenium-docker') {
     stage('Checkout') {
       git 'https://github.com/carlossg/selenium-example.git'
       parallel (
