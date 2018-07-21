@@ -1,0 +1,36 @@
+#! /bin/bash -e
+
+if [ $# -eq 1 ]; then
+
+	exec "$@"
+
+else
+
+	if [ -z "$JNLP_PROTOCOL_OPTS" ]; then
+		echo "Warning: JnlpProtocol3 is disabled by default, use JNLP_PROTOCOL_OPTS to alter the behavior"
+		JNLP_PROTOCOL_OPTS="-Dorg.jenkinsci.remoting.engine.JnlpProtocol3.disabled=true"
+	fi
+
+	OPT_JENKINS_URL=""
+	if [ -n "$JENKINS_URL" ]; then
+		if [[ "$@" != *"${JENKINS_URL}"* ]]; then
+			OPT_JENKINS_URL="${JENKINS_URL}"
+		else
+			echo "Error: JENKINS_URL is required environment variable"
+		fi
+	fi
+
+	OPT_JENKINS_SLAVE_NAME=""
+	if [ -n "$SLAVE_NAME" ]; then
+		if [[ "$@" != *"${SLAVE_NAME}"* ]]; then
+			OPT_JENKINS_SLAVE_NAME="${SLAVE_NAME}"
+		else
+			echo "Error: SLAVE_NAME is required environment variable"
+		fi
+	fi
+
+	# Configure the slave image
+  source /usr/local/bin/configure-jenkins-slave
+
+  exec java $JAVA_OPTS $JNLP_PROTOCOL_OPTS -jar /usr/share/jenkins/slave.jar -jnlpUrl $OPT_JENKINS_URL/computer/$OPT_JENKINS_SLAVE_NAME/slave-agent.jnlp
+fi

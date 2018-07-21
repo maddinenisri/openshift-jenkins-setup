@@ -88,7 +88,7 @@ objects:
     name: blueocean-jenkins
   spec:
     selector:
-      name: jenkins
+      name: blueocean-jenkins
     type: ClusterIP
     ports:
     - name: http-port
@@ -101,7 +101,7 @@ objects:
     name: blueocean-jenkins-jnlp
   spec:
     selector:
-      name: jenkins
+      name: blueocean-jenkins
     type: ClusterIP
     ports:
     - name: jnlp-port

@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: jenkins-agent
+  annotations:
+    description: "Jenkins agnet Template"
+    iconClass: "icon-jenkins-agent"
+    tags: "jenkins-agent,jenkins-slave"
+objects:
+- kind: BuildConfig
+  apiVersion: v1
+  metadata:
+    name: jenkins-agent
+  spec:
+    triggers:
+    - type: ConfigChange
+      configChange: {}
+    source:
+      contextDir: jnlp-agent
+      type: Git
+      git:
+        uri: https://github.com/maddinenisri/openshift-jenkins-setup
+        ref: master
+    strategy:
+      type: Docker
+      DockerStrategy: {}
+    output:
+      to:
+        kind: ImageStreamTag
+        name: jenkins-agent
+        :latest
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: jenkins-agent
+  spec:
+    dockerImageRepository: ''
+    tags:
+    - name: latest
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: jenkins-agent
+  spec:
+    strategy:
+      type: Recreate
+    triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - jenkins-agent
+        from:
+          kind: ImageStreamTag
+          name: jenkins-agent
+          :latest
+    - type: ConfigChange
+    replicas: 1
+    selector:
+      name: jenkins-agent
+    template:
+      metadata:
+        name: jenkins-agent
+        labels:
+          name: jenkins-agent
+      spec:
+        containers:
+        - image: jenkins-agent
+          imagePullPolicy: Always
+          name: jenkins-agent
+          volumeMounts:
+          - mountPath: /var/lib/jenkins
+            name: jenkins-agent-data
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir: {}
+          name: jenkins-agent-data
