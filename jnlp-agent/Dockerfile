@@ -25,6 +25,6 @@ VOLUME /home/${user}/.jenkins
 VOLUME ${AGENT_WORKDIR}
 WORKDIR /home/${user}
 
-COPY scripts/* /usr/local/bin/jenkins-slave
+COPY scripts/* /usr/local/bin/
 
 ENTRYPOINT ["jenkins-slave.sh"]
