@@ -160,6 +160,6 @@ objects:
       weight: 100
     wildcardPolicy: None
 parameters:
-  - name: name
+  - name: app
     description: name
     value: blueocean-jenkins
