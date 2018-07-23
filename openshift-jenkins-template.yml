@@ -99,6 +99,16 @@ objects:
     kind: ServiceAccount
     name: blueocean_jenkins 
 - apiVersion: v1
+  kind: RoleBinding
+  groupNames: null
+  metadata:
+    name: blueocean_jenkins_edit
+  roleRef:
+    name: edit
+  subjects:
+    kind: ServiceAccount
+    name: blueocean_jenkins 
+- apiVersion: v1
   kind: PersistentVolumeClaim 
   metadata:
     name: blueocean_jenkins_pvc
