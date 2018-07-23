@@ -17,4 +17,6 @@ oc policy add-role-to-user registry-editor admin
 
 docker login -p <token> -e unused -u unused
 docker push docker-registry.default.svc:5000/devops/jenkins-slave 
+
+oc policy add-role-to-user system:image-puller system:serviceaccount:demo-vertx:default -n devops
 ```
