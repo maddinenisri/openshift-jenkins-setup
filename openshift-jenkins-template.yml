@@ -96,7 +96,7 @@ objects:
   roleRef:
     name: hostaccess
   subjects:
-    kind: ServiceAccount
+  - kind: ServiceAccount
     name: blueocean-jenkins 
 - apiVersion: v1
   kind: RoleBinding
@@ -106,7 +106,7 @@ objects:
   roleRef:
     name: edit
   subjects:
-    kind: ServiceAccount
+  - kind: ServiceAccount
     name: blueocean-jenkins 
 - apiVersion: v1
   kind: PersistentVolumeClaim 
