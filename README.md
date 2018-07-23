@@ -9,6 +9,13 @@ oc create -f openshift-jenkins-template.yml
 Set jenkins secret credentials from login command for key oc_admin_login_time_based_token
 Hostaccess for docker mount 
 ```sh
+oc adm policy add-scc-to-user privileged -n devops -z blueocean-jenkins
+oc get sa/blueocean-jenkins --template='{{range .secrets}}{{ .name }} {{end}}' | xargs -n 1 oc get secret --template='{{ if .data.token }}{{ .data.token }}{{end}}' | head -n 1 | base64 -d -
+
+```
+
+
+```sh
 oc adm policy add-scc-to-user anyuid -z blueocean-jenkins
 oc get sa/blueocean-jenkins --template='{{range .secrets}}{{ .name }} {{end}}' | xargs -n 1 oc get secret --template='{{ if .data.token }}{{ .data.token }}{{end}}' | head -n 1 | base64 -d -
 
