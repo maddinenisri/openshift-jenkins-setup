@@ -1,5 +1,5 @@
 podTemplate(label: 'maven-selenium-docker', containers: [
-  containerTemplate(name: 'docker', image: 'docker-registry.default.svc:5000/devops/oc-docker:latest', ttyEnabled: true, command: 'cat'),
+  containerTemplate(name: 'docker', image: "docker-registry.default.svc:5000/${ns}/oc-docker:latest", ttyEnabled: true, command: 'cat'),
   containerTemplate(name: 'maven-firefox', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
   containerTemplate(name: 'maven-chrome', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
   containerTemplate(name: 'selenium-hub', image: 'selenium/hub:3.4.0'),
@@ -49,7 +49,7 @@ podTemplate(label: 'maven-selenium-docker', containers: [
       git 'https://github.com/jenkinsci/docker-jnlp-slave.git'
       container('docker') {
         sh "docker build -t ${image} ."
-        sh "docker tag ${image} docker-registry.default.svc:5000/devops/${image}"
+        sh "docker tag ${image} docker-registry.default.svc:5000/${ns}/${image}"
 
       }
     }
@@ -58,7 +58,7 @@ podTemplate(label: 'maven-selenium-docker', containers: [
         container('docker') {
             try {
                 withCredentials([string(credentialsId: 'oc_admin_login_time_based_token', variable: 'token')]) {
-                    sh "docker login -p $token -e unused -u unused docker-registry.default.svc:5000 && docker push docker-registry.default.svc:5000/devops/${image}"
+                    sh "docker login -p $token -e unused -u unused docker-registry.default.svc:5000 && docker push docker-registry.default.svc:5000/${ns}/${image}"
                 }
             }
             catch(failed) {
