@@ -22,3 +22,10 @@ pipeline-model-definition
 kubernetes
 github
 github-organization-folder
+pipeline-githubnotify-step
+cucumber-reports
+configuration-as-code
+openshift-client
+openshift-sync
+openshift-login
+openshift-pipeline
